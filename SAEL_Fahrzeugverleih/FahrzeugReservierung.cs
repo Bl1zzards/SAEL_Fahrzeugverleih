@@ -38,7 +38,6 @@ namespace SAEL_Fahrzeugverleih
             sSQL += "inner join fahrzeughersteller as h on m.hersteller_id = h.id ";
             sSQL += $"Where r.id={id}; ";
 
-
             MySqlConnection connection = new MySqlConnection(GlobalVar.connectionString);
             using (connection)
             {
@@ -48,6 +47,7 @@ namespace SAEL_Fahrzeugverleih
 
                 while (rdr.Read())
                 {
+                    //Überführen in Objekte
                     FahrzeugReservierung res = new FahrzeugReservierung();
                     res.Id = rdr.GetInt32("reservierung_id");
                     res.Beginn = rdr.GetDateTime("beginn");
@@ -82,6 +82,7 @@ namespace SAEL_Fahrzeugverleih
 
                 while (rdr.Read())
                 {
+                    //Überführen in Objekte
                     FahrzeugReservierung res = new FahrzeugReservierung();
                     res.Id = rdr.GetInt32("reservierung_id");
                     res.Beginn = rdr.GetDateTime("beginn");
@@ -95,6 +96,28 @@ namespace SAEL_Fahrzeugverleih
                 connection.Close();
             }
             return lstReturn;
+        }
+
+        public bool Delete()
+        {
+            //primitiv
+            bool retVal = false;
+            List<FahrzeugReservierung> lstReturn = new List<FahrzeugReservierung>();
+            string sSQL = $"delete from reservierung where id={this.Id} ";
+            MySqlConnection connection = new MySqlConnection(GlobalVar.connectionString);
+            using (connection)
+            {
+                connection.Open();
+                MySqlCommand cmd = new MySqlCommand(sSQL, connection);
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+                    retVal = true;
+                    Console.WriteLine("Reservierung erfolgreich gelöscht.");
+                }
+                else Console.WriteLine("Beim Löschen der Reservierung ist ein Fehler aufgetreten.");
+                connection.Close();
             }
+            return retVal;
+        }
     }
 }
